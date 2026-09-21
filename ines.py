@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 
+from dataclasses import dataclass
+from Estructuras.arbol_binario import ArbolBinarioBusqueda
+
 @dataclass
 class Character:
     id: str
@@ -27,22 +30,14 @@ class Character:
 
 class CharacterDatabase:
     def __init__(self):
-        self.characters = {}
+        self.bst = ArbolBinarioBusqueda()
         self.load_data()
 
     def get_by_id(self, char_id):
-        return self.characters.get(char_id.lower().strip())
-
-    def filter_chars(self, faction=None, char_type=None):
-        results = list(self.characters.values())
-        if faction:
-            results = [c for c in results if c.faction.lower() == faction.lower()]
-        if char_type:
-            results = [c for c in results if c.type.lower() == char_type.lower()]
-        return results
+     
+        return self.bst.buscar(char_id)
 
     def load_data(self):
-        # Datos de personajes
         raw_data = [
             Character(
                 "captain_america", "Captain America", "Marvel", "Inicial", "Balanced",
@@ -87,7 +82,7 @@ class CharacterDatabase:
         ]
 
         for c in raw_data:
-            self.characters[c.id.lower()] = c
+            self.bst.insertar(c)
 
 
 class App:
@@ -118,20 +113,23 @@ class App:
         mapping = {"A": "Rushdown", "B": "Zoner", "C": "Tank", "D": "Balanced"}
         estilo = mapping.get(res, "Balanced")
 
-        filtrados = [c for c in self.db.characters.values() if c.style_category == estilo]
+        filtrados = [c for c in self.db.bst.inorder() if c.style_category == estilo]
         print(f"\nRecomendados ({estilo}):")
         for c in filtrados:
             print(f"- {c.name} ({c.faction})")
 
     def ver_catalogo(self):
         print("\nPersonajes disponibles:")
-        for c in self.db.characters.values():
+        for c in self.db.bst.inorder():
             print(f"- [{c.id}] {c.name}")
 
         cid = input("\nEscribe el ID para ver detalle (o Enter para salir): ").strip()
-        char = self.db.get_by_id(cid)
-        if char:
-            char.display_info()
+        if cid:
+            char = self.db.get_by_id(cid)
+            if char:
+                char.display_info()
+            else:
+                print("❌ No encontrado.")
 
 
 if __name__ == "__main__":

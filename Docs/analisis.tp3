@@ -1,0 +1,13 @@
+# Análisis TP3: Árbol Binario de Búsqueda (BST)
+
+# 1. Análisis de Complejidad Temporal
+
+| Estructura / Algoritmo | Búsqueda Mejor Caso | Búsqueda Caso Promedio | Búsqueda Peor Caso |
+| :--- | :--- | :--- | :--- |
+| **Búsqueda Secuencial** | $O(1)$ | $O(n)$ | $O(n)$ |
+| **Búsqueda Binaria** | $O(1)$ | $O(\log n)$ | $O(\log n)$ |
+| **Árbol Binario (BST)** | $O(1)$ | $O(\log n)$ | $O(n)$ |
+
+# 2. Conclusión
+
+- La búsqueda mediante el **BST** permite consultar elementos en tiempo promedio $O(\log n)$, igualando la velocidad de la búsqueda binaria pero facilitando la inserción de datos de manera dinámica.

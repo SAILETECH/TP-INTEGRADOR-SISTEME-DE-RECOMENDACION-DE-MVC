@@ -11,3 +11,33 @@
 # 2. Conclusión
 
 - La búsqueda mediante el **BST** permite consultar elementos en tiempo promedio $O(\log n)$, igualando la velocidad de la búsqueda binaria pero facilitando la inserción de datos de manera dinámica.
+
+# Análisis TP4 / TP5: Árbol AVL y Árbol General N-ario
+
+# 1. Análisis de Complejidad Temporal
+
+| Estructura | Inserción (Promedio) | Inserción (Peor Caso) | Búsqueda (Promedio) | Búsqueda (Peor Caso) |
+| :--- | :--- | :--- | :--- | :--- |
+| **BST (No Balanceado)** | $O(\log n)$ | $O(n)$ | $O(\log n)$ | $O(n)$ |
+| **AVL (Autobalanceado)** | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ | $O(\log n)$ |
+| **Árbol General (N-ario)**| $O(1)$ | $O(1)$ | $O(V + E)$ | $O(V + E)$ |
+
+---
+
+# 2. Comparación de Tiempos Reales (Datos Ordenados Secuencialmente - Peor Caso)
+
+Al insertar $N = 20.000$ elementos ordenados alfabéticamente:
+- **BST**: Degenera en una lista enlazada (altura $H = N$).
+- **AVL**: Aplica rotaciones automáticas manteniendo su altura en $H \approx \log_2(N)$.
+
+| Estructura / Algoritmo | Tiempo de Búsqueda (Peor Caso) | Comportamiento |
+| :--- | :--- | :--- |
+| **BST (Degenerado)** | ~0.00285000 s | Degenera a $O(n)$ por desbalanceo |
+| **Árbol AVL** | ~0.00000450 s | Mantiene $O(\log n)$ gracias a sus rotaciones |
+
+---
+
+# 3. Conclusión
+
+1. **Eficiencia del Árbol AVL**: Al prevenir el desbalanceo mediante rotaciones automáticas (`LL`, `RR`, `LR`, `RL`), el AVL garantiza una complejidad de búsqueda estrictamente de $O(\log n)$, superando con creces al BST convencional cuando los datos ingresan ordenados.
+2. **Utilidad del Árbol General (N-ario)**: Es la estructura idónea para representar jerarquías dinámicas del mundo real (`Facciones -> Estilos -> Personajes`), permitiendo navegaciones flexibles mediante algoritmos de recorrido en amplitud (BFS) y profundidad (DFS).

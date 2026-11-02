@@ -1,7 +1,7 @@
+# app.py
 from dataclasses import dataclass
-
-from dataclasses import dataclass
-from Estructuras.arbol_binario import ArbolBinarioBusqueda
+from Estructuras.avl import ArbolAVL
+from Estructuras.arbol_general import ArbolGeneral, NodoArbolGeneral
 
 @dataclass
 class Character:
@@ -30,12 +30,12 @@ class Character:
 
 class CharacterDatabase:
     def __init__(self):
-        self.bst = ArbolBinarioBusqueda()
+        self.avl = ArbolAVL()
+        self.arbol_general = ArbolGeneral("Universo Marvel vs Capcom")
         self.load_data()
 
     def get_by_id(self, char_id):
-     
-        return self.bst.buscar(char_id)
+        return self.avl.buscar(char_id)
 
     def load_data(self):
         raw_data = [
@@ -82,7 +82,23 @@ class CharacterDatabase:
         ]
 
         for c in raw_data:
-            self.bst.insertar(c)
+            self.avl.insertar(c)
+
+        nodo_marvel = self.arbol_general.raiz.agregar_hijo(NodoArbolGeneral("Marvel"))
+        nodo_capcom = self.arbol_general.raiz.agregar_hijo(NodoArbolGeneral("Capcom"))
+
+        estilos_marvel = {}
+        estilos_capcom = {}
+
+        for c in raw_data:
+            padre_faccion = nodo_marvel if c.faction.lower() == "marvel" else nodo_capcom
+            mapa_estilos = estilos_marvel if c.faction.lower() == "marvel" else estilos_capcom
+
+            if c.style_category not in mapa_estilos:
+                nodo_estilo = padre_faccion.agregar_hijo(NodoArbolGeneral(f"Estilo: {c.style_category}"))
+                mapa_estilos[c.style_category] = nodo_estilo
+
+            mapa_estilos[c.style_category].agregar_hijo(NodoArbolGeneral(c.name, c))
 
 
 class App:
@@ -91,45 +107,42 @@ class App:
 
     def run(self):
         while True:
-            print("\n--- MENU MvC1 ---")
-            print("1. Buscar por Estilo")
-            print("2. Ver Personajes")
+            print("\n--- MENU MvC1 (TP4/TP5 - AVL & Árbol N-ario) ---")
+            print("1. Buscar Personaje (Usa Árbol AVL)")
+            print("2. Explorar Categorías (Usa Árbol N-ario)")
             print("3. Asistencias Top")
             print("0. Salir")
 
             op = input("\nOpción: ")
             if op == "1":
-                self.test_estilo()
+                self.buscar_avl()
             elif op == "2":
-                self.ver_catalogo()
+                self.explorar_categorias()
             elif op == "3":
                 print("\nTop Asistencias: Psylocke (anti-air/combo), Colossus (armor), Cyclops (beam).")
             elif op == "0":
                 break
 
-    def test_estilo(self):
-        print("\nEstilos: (A) Rushdown | (B) Zoner | (C) Tank | (D) Balanced")
-        res = input("Elige: ").upper()
-        mapping = {"A": "Rushdown", "B": "Zoner", "C": "Tank", "D": "Balanced"}
-        estilo = mapping.get(res, "Balanced")
-
-        filtrados = [c for c in self.db.bst.inorder() if c.style_category == estilo]
-        print(f"\nRecomendados ({estilo}):")
-        for c in filtrados:
-            print(f"- {c.name} ({c.faction})")
-
-    def ver_catalogo(self):
-        print("\nPersonajes disponibles:")
-        for c in self.db.bst.inorder():
+    def buscar_avl(self):
+        print("\nPersonajes disponibles en el AVL:")
+        for c in self.db.avl.inorder():
             print(f"- [{c.id}] {c.name}")
 
-        cid = input("\nEscribe el ID para ver detalle (o Enter para salir): ").strip()
+        cid = input("\nEscribe el ID para ver detalle: ").strip()
         if cid:
             char = self.db.get_by_id(cid)
             if char:
                 char.display_info()
             else:
-                print("❌ No encontrado.")
+                print("❌ Personaje no encontrado mediante AVL.")
+
+    def explorar_categorias(self):
+        print("\n--- JERARQUÍA DEL DOMINIO (Árbol N-ario - DFS) ---")
+        elementos = self.db.arbol_general.recorrido_profundidad()
+        for nombre, nivel, datos in elementos:
+            indentacion = "  " * nivel
+            icono = "📁" if nivel < 2 else "👤"
+            print(f"{indentacion}{icono} {nombre}")
 
 
 if __name__ == "__main__":
